@@ -1,0 +1,14 @@
+# Do NOT update manually; changes here will be overwritten by Copier
+_commit: 5b146b5
+_src_path: gh:open-synergy/ssi-addons-repo-template
+dependency_installation_mode: OCA
+generate_requirements_txt: true
+include_aeroo_report: false
+include_wkhtmltopdf: false
+odoo_version: 14.0
+rebel_module_groups: []
+repo_description: ssi-bni-ecollection
+repo_name: ssi-bni-ecollection
+repo_slug: ssi-bni-ecollection
+travis_apt_packages: []
+travis_apt_sources: []
