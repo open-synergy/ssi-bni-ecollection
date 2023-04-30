@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Copyright 2023 OpenSynergy Indonesia-->
+<!--Copyright 2023 PT. Simetri Sinergi Indonesia-->
+<!--License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).-->
+<odoo>
+<record id="account_journal_view_form" model="ir.ui.view">
+    <field name="name">account.journal - Form</field>
+    <field name="model">account.journal</field>
+    <field name="inherit_id" ref="account.view_account_journal_form" />
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//form//notebook" position="inside">
+                <page name="bni_ecollection" string="BNI e-Collection">
+                    <group name="bni_ecollection" colspan="4" col="2">
+                        <group name="bni_ecollection_1" colspan="1" col="2">
+                            <field name="is_bni_ecollection_billing" />
+                            <field name="auto_create_bni_ecollection_invoice" />
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+</odoo>
