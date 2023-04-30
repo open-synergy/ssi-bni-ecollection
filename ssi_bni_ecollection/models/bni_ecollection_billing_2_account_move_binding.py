@@ -12,7 +12,7 @@ from odoo.exceptions import UserError
 
 from odoo.addons.component.core import Component
 
-from ..lib.bni_encryption import BniEnc
+from ..bni_encryption import BniEnc
 
 _logger = logging.getLogger(__name__)
 
