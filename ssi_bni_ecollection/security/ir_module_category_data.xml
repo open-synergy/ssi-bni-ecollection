@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2022 OpenSynergy Indonesia
+     Copyright 2022 PT. Simetri Sinergi Indonesia
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<odoo>
+<record id="loan_module_category" model="ir.module.category">
+    <field name="name">Loan</field>
+</record>
+
+<record id="loan_workflow_module_category" model="ir.module.category">
+    <field name="name">Loan - Workflow</field>
+    <field name="parent_id" ref="loan_module_category" />
+</record>
+
+<record id="loan_configurator_module_category" model="ir.module.category">
+    <field name="name">Loan - Configurator</field>
+    <field name="parent_id" ref="loan_module_category" />
+</record>
+
+<record id="loan_data_ownership_module_category" model="ir.module.category">
+    <field name="name">Loan - Data Ownership</field>
+    <field name="parent_id" ref="loan_module_category" />
+</record>
+
+<!-- Workflow -->
+<record id="loan_out_module_category" model="ir.module.category">
+    <field name="name">Loan Out</field>
+    <field name="parent_id" ref="loan_workflow_module_category" />
+</record>
+
+<record id="loan_in_module_category" model="ir.module.category">
+    <field name="name">Loan In</field>
+    <field name="parent_id" ref="loan_workflow_module_category" />
+</record>
+
+<!-- Data Ownership -->
+<record id="loan_out_data_ownership_module_category" model="ir.module.category">
+    <field name="name">Loan Out</field>
+    <field name="parent_id" ref="loan_data_ownership_module_category" />
+</record>
+
+<record id="loan_in_data_ownership_module_category" model="ir.module.category">
+    <field name="name">Loan In</field>
+    <field name="parent_id" ref="loan_data_ownership_module_category" />
+</record>
+
+</odoo>

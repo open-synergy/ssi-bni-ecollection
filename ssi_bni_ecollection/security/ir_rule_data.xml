@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 OpenSynergy Indonesia
+     Copyright 2021 PT. Simetri Sinergi Indonesia
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<odoo>
+<!-- Loan Out -->
+<record id="loan_out_internal_user_rule" model="ir.rule">
+    <field name="name">Loan Out - Internal Users</field>
+    <field name="model_id" ref="model_loan_out" />
+    <field name="groups" eval="[(4, ref('base.group_user'))]" />
+    <field name="domain_force">[
+      ('user_id','=',user.id),
+    ]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_out_company_rule" model="ir.rule">
+    <field name="name">Loan Out - Responsible to company data</field>
+    <field name="model_id" ref="model_loan_out" />
+    <field name="groups" eval="[(4, ref('loan_out_company_group'))]" />
+    <field name="domain_force">[('company_id','=',user.company_id.id)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_out_companies_rule" model="ir.rule">
+    <field
+            name="name"
+        >Loan Out - Responsible to company and all child companies data</field>
+    <field name="model_id" ref="model_loan_out" />
+    <field name="groups" eval="[(4, ref('loan_out_company_child_group'))]" />
+    <field name="domain_force">[('company_id','in',user.company_ids.ids)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_out_all_rule" model="ir.rule">
+    <field name="name">Loan Out - All</field>
+    <field name="model_id" ref="model_loan_out" />
+    <field name="groups" eval="[(4, ref('loan_out_all_group'))]" />
+    <field name="domain_force">[(1,'=',1)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<!-- Loan In -->
+<record id="loan_in_internal_user_rule" model="ir.rule">
+    <field name="name">Loan In - Internal Users</field>
+    <field name="model_id" ref="model_loan_in" />
+    <field name="groups" eval="[(4, ref('base.group_user'))]" />
+    <field name="domain_force">[
+      ('user_id','=',user.id),
+    ]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_in_company_rule" model="ir.rule">
+    <field name="name">Loan In - Responsible to company data</field>
+    <field name="model_id" ref="model_loan_in" />
+    <field name="groups" eval="[(4, ref('loan_in_company_group'))]" />
+    <field name="domain_force">[('company_id','=',user.company_id.id)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_in_companies_rule" model="ir.rule">
+    <field
+            name="name"
+        >Loan In - Responsible to company and all child companies data</field>
+    <field name="model_id" ref="model_loan_in" />
+    <field name="groups" eval="[(4, ref('loan_in_company_child_group'))]" />
+    <field name="domain_force">[('company_id','in',user.company_ids.ids)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_in_all_rule" model="ir.rule">
+    <field name="name">Loan In - All</field>
+    <field name="model_id" ref="model_loan_in" />
+    <field name="groups" eval="[(4, ref('loan_in_all_group'))]" />
+    <field name="domain_force">[(1,'=',1)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+
+</odoo>
