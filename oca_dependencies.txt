@@ -1,0 +1,15 @@
+# See https://github.com/OCA/odoo-community.org/blob/master/website/Contribution/CONTRIBUTING.rst#oca_dependencies-txt
+
+oca-server-tools https://github.com/OCA/server-tools.git 14.0
+oca-queue https://github.com/OCA/queue.git 14.0
+oca-connector https://github.com/OCA/connector.git 14.0
+ssi-mixin https://github.com/open-synergy/ssi-mixin.git 14.0
+ssi-financial-accounting https://github.com/open-synergy/ssi-financial-accounting.git 14.0
+ssi-connector-financial-accounting https://github.com/open-synergy/ssi-connector-financial-accounting.git 14.0
+oca-server-tools https://github.com/OCA/server-tools.git 14.0
+oca-currency https://github.com/OCA/currency.git 14.0
+oca-reporting-engine https://github.com/OCA/reporting-engine.git 14.0
+oca-account-financial-reporting https://github.com/OCA/account-financial-reporting.git 14.0
+akretion-odoo-usability https://github.com/akretion/odoo-usability.git 14.0
+oca-bank-statement-import https://github.com/OCA/bank-statement-import.git 14.0
+oca-web https://github.com/OCA/web.git 14.0
