@@ -7,7 +7,7 @@ import logging
 
 import requests
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from odoo.addons.component.core import Component
@@ -51,19 +51,102 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         string="Trx ID",
         required=False,
     )
+    job_id = fields.Many2one(
+        string="Job Queue",
+        comodel_name="queue.job",
+        ondelete="set null",
+    )
+    job_state = fields.Selection(
+        string="Job State",
+        related="job_id.state",
+    )
+    create_ok = fields.Boolean(
+        string="Create Ok",
+        compute="_compute_create_update",
+        store=False,
+    )
+    update_ok = fields.Boolean(
+        string="Update Ok",
+        compute="_compute_create_update",
+        store=False,
+    )
+
+    @api.depends(
+        "job_id",
+        "bni_va",
+    )
+    def _compute_create_update(self):
+        for record in self:
+            create_ok = update_ok = False
+            if not record.job_id and record.bni_va == "-":
+                create_ok = True
+            elif not record.job_id and record.bni_va != "-":
+                update_ok = True
+            self.create_ok = create_ok
+            self.update_ok = update_ok
 
     def action_create_invoice(self):
         for record in self.sudo():
-            record.with_delay()._create_invoice()
+            record._create_update_billing()
 
-    def _create_invoice(self):
+    def action_update_invoice(self):
+        for record in self.sudo():
+            record._create_update_billing()
+
+    def action_requeue(self):
+        for record in self.sudo():
+            record._requeue()
+
+    def _requeue(self):
+        self.ensure_one()
+
+        if not self.job_id:
+            return True
+
+        self.job_id.requeue()
+
+    def _create_update_billing(self):
         self.ensure_one()
 
         if not self._get_receivable_move_line():
             error_msg = _("No receivable move line")
             raise UserError(error_msg)
 
-        self._post_data()
+        if self.bni_va == "-":
+            description = "Creating billing for %s" % (self.name)
+            job = self.with_delay(description=_(description))._create_invoice()
+        else:
+            description = "Update billing for %s" % (self.name)
+            job = self.with_delay(description=_(description))._update_invoice()
+
+        QueueJob = self.env["queue.job"]
+        criteria = [("uuid", "=", job.uuid)]
+        self.write(
+            {
+                "job_id": QueueJob.search(criteria, limit=1).id,
+            }
+        )
+
+    def _prepare_billing_create_data(self):
+        self.ensure_one()
+        result = self._prepare_billing_data()
+        result.update(
+            {
+                "type": "createbilling",
+                "billing_type": "c",
+            }
+        )
+        return result
+
+    def _prepare_billing_update_data(self):
+        self.ensure_one()
+        result = self._prepare_billing_data()
+        result.update(
+            {
+                "type": "updatebilling",
+            }
+        )
+        return result
 
     def _prepare_billing_data(self):
         self.ensure_one()
@@ -72,34 +155,34 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         partner = invoice.partner_id.commercial_partner_id
         ml = self._get_receivable_move_line()
         return {
-            "type": "createbilling",
             "client_id": backend.client_id,
             "trx_id": invoice.name,
             "trx_amount": ml.debit,
-            "billing_type": "c",
             "customer_name": partner.name,
             "customer_email": partner.email or "-",
             "customer_phone": partner.mobile or "-",
             "description": invoice.payment_reference,
         }
 
-    def _encrypt_billing_data(self):
+    def _encrypt_billing_data(self, json_data):
         backend = self.backend_id
-        json_data = self._prepare_billing_data()
         BNI = BniEnc()
         return BNI.encrypt(json_data, backend.client_id, backend.secret_key)
 
-    def _post_data(self):
+    def _get_headers(self):
+        self.ensure_one()
+        return {
+            "Content-Type": "application/json",
+        }
+
+    def _create_invoice(self):
         backend = self.backend_id
         url = backend.ecollection_url
         prefix = backend.prefix_va
         client_id = backend.client_id
-
-        headers = {
-            "Content-Type": "application/json",
-        }
-
-        data = self._encrypt_billing_data()
+        headers = self._get_headers()
+        json_data = self._prepare_billing_create_data()
+        data = self._encrypt_billing_data(json_data)
 
         payload = json.dumps({"client_id": client_id, "prefix": prefix, "data": data})
 
@@ -107,8 +190,26 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
             response = requests.request("POST", url, headers=headers, data=payload)
             result = response.json()
             self._process_result(result)
-        except Exception:
-            raise UserError(response.text)
+        except Exception as e:
+            raise UserError(str(e))
+
+    def _update_invoice(self):
+        backend = self.backend_id
+        url = backend.ecollection_url
+        prefix = backend.prefix_va
+        client_id = backend.client_id
+        headers = self._get_headers()
+        json_data = self._prepare_billing_update_data()
+        data = self._encrypt_billing_data(json_data)
+
+        payload = json.dumps({"client_id": client_id, "prefix": prefix, "data": data})
+
+        try:
+            response = requests.request("POST", url, headers=headers, data=payload)
+            result = response.json()
+            self._process_result(result)
+        except Exception as e:
+            raise UserError(str(e))
 
     def _process_result(self, result):
         if result["status"] == "000":
@@ -125,6 +226,7 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
             {
                 "trx_id": data["trx_id"],
                 "va": data["virtual_account"],
+                "job_id": False,
             }
         )
 
@@ -158,7 +260,7 @@ class BNIeCollectionBilling2AccountMoveBindingListener(Component):
 
     def on_record_create(self, record, fields=None):
         if record.auto_create_bni_ecollection_invoice:
-            record.with_delay()._create_invoice()
+            record._create_update_billing()
 
 
 class AccountMove(models.Model):
@@ -199,14 +301,22 @@ class BNIeCollectionAccountMoveListener(Component):
 
         auto_create = record.journal_id.auto_create_bni_ecollection_invoice
 
-        Binding.create(
-            {
-                "backend_id": record.company_id.bni_ecollection_backend_id.id,
-                "odoo_id": record.id,
-                "bni_va": "-",
-                "auto_create_bni_ecollection_invoice": auto_create,
-            }
-        )
+        criteria = [("odoo_id", "=", record.id), ("backend_id", "=", backend.id)]
+
+        bindings = Binding.search(criteria)
+
+        if len(bindings) == 0:
+            Binding.create(
+                {
+                    "backend_id": record.company_id.bni_ecollection_backend_id.id,
+                    "odoo_id": record.id,
+                    "bni_va": "-",
+                    "auto_create_bni_ecollection_invoice": auto_create,
+                }
+            )
+        else:
+            if auto_create:
+                bindings[0]._create_update_billing()
 
     def _delete_bni_ecollection_invoice_binding(self, record):
         if not record.company_id.bni_ecollection_backend_id:
@@ -215,6 +325,10 @@ class BNIeCollectionAccountMoveListener(Component):
         backend = record.company_id.bni_ecollection_backend_id
         Binding = self.env["bni_ecollection_billing_2_account_move_binding"]
 
-        criteria = [("backend_id", "=", backend.id), ("odoo_id", "=", record.id)]
+        criteria = [
+            ("backend_id", "=", backend.id),
+            ("odoo_id", "=", record.id),
+            ("bni_va", "=", "-"),
+        ]
 
         Binding.search(criteria).unlink()

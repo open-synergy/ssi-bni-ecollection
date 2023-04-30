@@ -12,11 +12,36 @@
             <xpath expr="//form//notebook" position="inside">
                 <page name="bni_ecollection" string="BNI e-Collection">
                     <field name="bni_ecollection_billing_bind_ids">
-                        <tree>
+                        <tree create="false" delete="false">
                             <field name="backend_id" />
                             <field name="auto_create_bni_ecollection_invoice" />
                             <field name="bni_va" />
                             <field name="trx_id" />
+                            <field name="job_id" />
+                            <field name="job_state" />
+                            <field name="create_ok" invisible="1" />
+                            <field name="update_ok" invisible="1" />
+                            <button
+                                    name="action_create_invoice"
+                                    type="object"
+                                    icon="fa-file"
+                                    help="Create Billing"
+                                    attrs="{'invisible':[('create_ok','=',False)]}"
+                                />
+                            <button
+                                    name="action_update_invoice"
+                                    type="object"
+                                    icon="fa-edit"
+                                    help="Update Billing"
+                                    attrs="{'invisible':[('update_ok','=',False)]}"
+                                />
+                            <button
+                                    name="action_requeue"
+                                    type="object"
+                                    icon="fa-cogs"
+                                    help="Requeue Job"
+                                    attrs="{'invisible':[('job_state','!=','failed')]}"
+                                />
                         </tree>
                     </field>
                 </page>
