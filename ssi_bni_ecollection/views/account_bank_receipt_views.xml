@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Copyright 2023 OpenSynergy Indonesia-->
+<!--Copyright 2023 PT. Simetri Sinergi Indonesia-->
+<!--License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).-->
+<odoo>
+<record id="account_bank_receipt_view_form" model="ir.ui.view">
+    <field name="name">account.bank_receipt - Form</field>
+    <field name="model">account.bank_receipt</field>
+    <field
+            name="inherit_id"
+            ref="ssi_voucher_bank_cash.account_bank_receipt_view_form"
+        />
+    <field name="priority" eval="20" />
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//form//notebook" position="inside">
+                <page name="bni_ecollection" string="BNI e-Collection">
+                    <field name="bni_ecollection_receipt_bind_ids" />
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+</odoo>

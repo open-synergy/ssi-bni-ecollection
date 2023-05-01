@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_bni_ecollection_backend_all,bni_ecollection_backend - All user ,model_bni_ecollection_backend,,1,0,0,0
 access_bni_ecollection_backend_admin,bni_ecollection_backend - Administrator Setting,model_bni_ecollection_backend,base.group_system,1,1,1,1
 access_bni_ecollection_billing_binding_all,bni_ecollection_billing_2_account_move_binding - All user ,model_bni_ecollection_billing_2_account_move_binding,,1,1,1,1
+access_bni_ecollection_payment_2_bank_receipt_binding_all,bni_ecollection_payment_2_bank_receipt_binding - All user ,model_bni_ecollection_payment_2_bank_receipt_binding,,1,1,1,1

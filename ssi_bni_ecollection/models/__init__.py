@@ -5,6 +5,7 @@
 from . import (
     bni_ecollection_backend,
     bni_ecollection_billing_2_account_move_binding,
+    bni_ecollection_payment_2_bank_receipt_binding,
     res_company,
     account_journal,
 )

@@ -52,6 +52,11 @@
                         </group>
                     </group>
                 </page>
+                <page name="payment" string="Payment">
+                    <group name="payment_1" colspan="4" col="2">
+                        <field name="payment_journal_id" />
+                    </group>
+                </page>
             </xpath>
         </data>
     </field>

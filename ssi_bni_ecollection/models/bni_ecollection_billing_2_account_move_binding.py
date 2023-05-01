@@ -93,9 +93,69 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         for record in self.sudo():
             record._create_update_billing()
 
+    def action_payment_inquiry(self):
+        for record in self.sudo():
+            record._payment_inquiry()
+
     def action_requeue(self):
         for record in self.sudo():
             record._requeue()
+
+    def _payment_inquiry(self):
+        self.ensure_one()
+        description = "Update payment billing for %s" % (self.name)
+        job = self.with_delay(description=_(description))._post_payment_inquiry()
+        QueueJob = self.env["queue.job"]
+        criteria = [("uuid", "=", job.uuid)]
+        self.write(
+            {
+                "job_id": QueueJob.search(criteria, limit=1).id,
+            }
+        )
+
+    def _post_payment_inquiry(self):
+        self.ensure_one()
+        backend = self.backend_id
+        url = backend.ecollection_url
+        prefix = backend.prefix_va
+        client_id = backend.client_id
+        headers = self._get_headers()
+
+        json_data = self._prepare_payment_inquiry_data()
+        data = self._encrypt_billing_data(json_data)
+
+        payload = json.dumps({"client_id": client_id, "prefix": prefix, "data": data})
+
+        try:
+            response = requests.request("POST", url, headers=headers, data=payload)
+            result = response.json()
+            self._process_payment_result(result)
+        except Exception as e:
+            raise UserError(str(e))
+
+    def _process_payment_result(self, result):
+        if result["status"] == "000":
+            Binding = self.env["bni_ecollection_payment_2_bank_receipt_binding"]
+            hashed_string = result["data"]
+            Binding._create_bank_receipt_binding(hashed_string)
+            self.write(
+                {
+                    "job_id": False,
+                }
+            )
+        else:
+            raise UserError(result)
+
+    def _prepare_payment_inquiry_data(self):
+        self.ensure_one()
+        invoice = self.odoo_id
+        backend = self.backend_id
+        result = {
+            "client_id": backend.client_id,
+            "trx_id": invoice.name,
+            "type": "inquirybilling",
+        }
+        return result
 
     def _requeue(self):
         self.ensure_one()

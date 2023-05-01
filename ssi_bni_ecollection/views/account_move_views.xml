@@ -42,6 +42,13 @@
                                     help="Requeue Job"
                                     attrs="{'invisible':[('job_state','!=','failed')]}"
                                 />
+                            <button
+                                    name="action_payment_inquiry"
+                                    type="object"
+                                    icon="fa-refresh"
+                                    help="Inquiry Payment"
+                                    attrs="{'invisible':[('update_ok','=',False)]}"
+                                />
                         </tree>
                     </field>
                 </page>

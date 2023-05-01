@@ -35,6 +35,7 @@ class BNIeCollectionBackend(models.Model):
         string="BNI e-Collection URL",
         required=True,
     )
+    # Billing
     billing_account_receivable_ids = fields.Many2many(
         string="Billing Account Receivables",
         comodel_name="account.account",
@@ -48,4 +49,9 @@ class BNIeCollectionBackend(models.Model):
         relation="rel_bni_ecollection_backend_2_journal",
         column1="backend_id",
         column2="journal_id",
+    )
+    # Payment
+    payment_journal_id = fields.Many2one(
+        string="Bank Journal",
+        comodel_name="account.journal",
     )
