@@ -232,7 +232,7 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         backend = self.backend_id
         BNI = BniEnc()
         data = BNI.decrypt(hashed_string, backend.client_id, backend.secret_key)
-        data_dict = json.data()
+        data_dict = json.loads(data)
         self.write(
             {
                 "bni_va": data_dict["virtual_account"],
