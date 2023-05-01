@@ -155,13 +155,16 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         partner = invoice.partner_id.commercial_partner_id
         ml = self._get_receivable_move_line()
         amount = int(ml.debit)
+        description_len = len(invoice.payment_reference)
+        if description_len > 100:
+            description_len = 100
         result = {
             "client_id": backend.client_id,
             "trx_id": invoice.name,
             "trx_amount": amount,
             "customer_name": partner.name,
             "customer_phone": partner.mobile or "-",
-            "description": invoice.payment_reference,
+            "description": invoice.payment_reference[0:description_len],
         }
         if invoice.partner_id.email:
             result.update(
