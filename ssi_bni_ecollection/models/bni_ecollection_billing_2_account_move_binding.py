@@ -212,8 +212,8 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         self.ensure_one()
         invoice = self.odoo_id
         backend = self.backend_id
-        partner = invoice.partner_id.commercial_partner_id
         ml = self._get_receivable_move_line()
+        partner = ml.partner_id.commercial_partner_id
         amount = int(ml.debit)
         result = {
             "client_id": backend.client_id,
