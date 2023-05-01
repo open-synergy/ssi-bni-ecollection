@@ -55,6 +55,23 @@
                 <page name="payment" string="Payment">
                     <group name="payment_1" colspan="4" col="2">
                         <field name="payment_journal_id" />
+                        <field name="payment_cron_id" />
+                        <button
+                                name="action_create_payment_cron"
+                                type="object"
+                                icon="fa-file"
+                                string="Payment Cron"
+                                help="Create Payment Cron"
+                                attrs="{'invisible':[('payment_cron_id','!=',False)]}"
+                            />
+                        <button
+                                name="action_delete_payment_cron"
+                                type="object"
+                                icon="fa-eraser"
+                                string="Payment Cron"
+                                help="Delete Payment Cron"
+                                attrs="{'invisible':[('payment_cron_id','=',False)]}"
+                            />
                     </group>
                 </page>
             </xpath>

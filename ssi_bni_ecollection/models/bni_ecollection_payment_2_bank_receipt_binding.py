@@ -117,7 +117,7 @@ class BNIeCollectionPayment2BankReceiptBinding(models.Model):
         self.ensure_one()
         payment_date = self.datetime_payment.strftime("%Y-%m-%d")
         receivable_ml = self._get_receivable_move_line()
-        description = "Payment for %s" % (self.trx_id)
+        description = "Payment for %s Ref: %s" % (self.trx_id, self.payment_ntb)
         backend = self.backend_id
         journal = backend.payment_journal_id
         result = {
@@ -184,6 +184,11 @@ class BNIeCollectionPayment2BankReceiptBinding(models.Model):
         if not backend:
             return True
 
+        data = self._decrypt_data(hashed_string)
+
+        if data["payment_amount"] == 0.0:
+            return True
+
         Binding = self.env["bni_ecollection_payment_2_bank_receipt_binding"]
         Binding.create(self._prepare_create_bank_receipt_binding(hashed_string))
 
@@ -208,9 +213,9 @@ class BNIeCollectionPayment2BankReceiptBindingListener(Component):
     _inherit = "base.event.listener"
     _apply_on = ["bni_ecollection_payment_2_bank_receipt_binding_listener"]
 
-    # def on_record_create(self, record, fields=None):
-    #     if record.auto_create_bni_ecollection_invoice:
-    #         record._create_update_billing()
+    def on_record_create(self, record, fields=None):
+        if record.auto_create_bni_ecollection_invoice:
+            record._create_update_bank_receipt()
 
 
 class AccountBankReceipt(models.Model):

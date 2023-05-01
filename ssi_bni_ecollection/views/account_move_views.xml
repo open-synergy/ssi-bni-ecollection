@@ -19,6 +19,11 @@
                             <field name="trx_id" />
                             <field name="job_id" />
                             <field name="job_state" />
+                            <field name="receivable_move_line_id" invisible="1" />
+                            <field
+                                    name="receivable_move_line_reconciled"
+                                    invisible="1"
+                                />
                             <field name="create_ok" invisible="1" />
                             <field name="update_ok" invisible="1" />
                             <button

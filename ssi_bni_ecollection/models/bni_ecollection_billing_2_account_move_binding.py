@@ -39,6 +39,17 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         required=True,
         ondelete="cascade",
     )
+    receivable_move_line_id = fields.Many2one(
+        string="Receivable Move Line",
+        comodel_name="account.move.line",
+        compute="_compute_receivable_move_line_id",
+        store=True,
+    )
+    receivable_move_line_reconciled = fields.Boolean(
+        string="Receivable Move Line Reconciled",
+        related="receivable_move_line_id.reconciled",
+        store=True,
+    )
     bni_va = fields.Char(
         string="BNI VA",
         required=False,
@@ -70,6 +81,33 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         compute="_compute_create_update",
         store=False,
     )
+
+    @api.depends(
+        "backend_id",
+        "odoo_id",
+    )
+    def _compute_receivable_move_line_id(self):
+        for record in self:
+            move = self.odoo_id
+            backend = self.backend_id
+
+            if not backend.billing_account_receivable_ids:
+                record.receivable_move_line_id = False
+                continue
+
+            accounts = backend.billing_account_receivable_ids
+            ML = self.env["account.move.line"]
+            criteria = [
+                ("move_id", "=", move.id),
+                ("account_id", "in", accounts.ids),
+                ("debit", ">", 0.0),
+            ]
+            move_lines = ML.search(criteria)
+
+            if len(move_lines) > 0:
+                record.receivable_move_line_id = move_lines[0]
+            else:
+                record.receivable_move_line_id = False
 
     @api.depends(
         "job_id",
