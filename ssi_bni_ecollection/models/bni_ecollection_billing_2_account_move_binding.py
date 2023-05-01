@@ -232,13 +232,13 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         backend = self.backend_id
         BNI = BniEnc()
         data = BNI.decrypt(hashed_string, backend.client_id, backend.secret_key)
-        self.write(
-            {
-                "trx_id": data["trx_id"],
-                "va": data["virtual_account"],
-                "job_id": False,
-            }
-        )
+        # self.write(
+        #     {
+        #         "bni_va": data["virtual_account"],
+        #         "job_id": False,
+        #     }
+        # )
+        self.write({"narration": str(data), "job_id": False, "trx_id": str(type(data))})
 
     def _get_receivable_move_line(self):
         result = False
