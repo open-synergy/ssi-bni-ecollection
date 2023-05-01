@@ -88,8 +88,8 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
     )
     def _compute_receivable_move_line_id(self):
         for record in self:
-            move = self.odoo_id
-            backend = self.backend_id
+            move = record.odoo_id
+            backend = record.backend_id
 
             if not backend.billing_account_receivable_ids:
                 record.receivable_move_line_id = False
