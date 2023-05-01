@@ -164,7 +164,7 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
             "trx_amount": amount,
             "customer_name": partner.name,
             "customer_phone": partner.mobile or "-",
-            "description": invoice.payment_reference[0:description_len],
+            "description": invoice.name,
         }
         if invoice.partner_id.email:
             result.update(

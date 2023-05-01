@@ -4,7 +4,7 @@
 
 {
     "name": "BNI e-Collection Integration",
-    "version": "14.0.1.1.5",
+    "version": "14.0.1.1.6",
     "category": "Accounting",
     "website": "https://simetri-sinergi.id",
     "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
