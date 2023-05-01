@@ -160,11 +160,10 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
             "trx_id": invoice.name,
             "trx_amount": amount,
             "customer_name": partner.name,
-            "customer_email": partner.email or "-",
             "customer_phone": partner.mobile or "-",
             "description": invoice.payment_reference,
         }
-        if invoice.partner_id:
+        if invoice.partner_id.email:
             result.update(
                 {
                     "customer_email": invoice.partner_id.email,
