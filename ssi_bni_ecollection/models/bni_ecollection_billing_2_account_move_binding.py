@@ -154,15 +154,23 @@ class BNIeCollectionBilling2AccountMoveBinding(models.Model):
         backend = self.backend_id
         partner = invoice.partner_id.commercial_partner_id
         ml = self._get_receivable_move_line()
-        return {
+        amount = int(ml.debit)
+        result = {
             "client_id": backend.client_id,
             "trx_id": invoice.name,
-            "trx_amount": ml.debit,
+            "trx_amount": amount,
             "customer_name": partner.name,
             "customer_email": partner.email or "-",
             "customer_phone": partner.mobile or "-",
             "description": invoice.payment_reference,
         }
+        if invoice.partner_id:
+            result.update(
+                {
+                    "customer_email": invoice.partner_id.email,
+                }
+            )
+        return result
 
     def _encrypt_billing_data(self, json_data):
         backend = self.backend_id
