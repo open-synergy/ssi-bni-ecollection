@@ -14,7 +14,11 @@ ssi-bni-ecollection
 
 [//]: # (addons)
 
-This part will be replaced when running the oca-gen-addons-table script from OCA/maintainer-tools.
+Available addons
+----------------
+addon | version | maintainers | summary
+--- | --- | --- | ---
+[ssi_bni_ecollection](ssi_bni_ecollection/) | 14.0.2.2.0 |  | BNI e-Collection Integration
 
 [//]: # (end addons)
 
